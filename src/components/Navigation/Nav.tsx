@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function Nav() {
   return (
-    <nav className="flex justify-around items-center min-h-[10vh] bg-gray text-white">
+    <nav className="flex justify-around items-center min-h-[10vh] bg-darkerGray text-white">
       <ul className="w-1/2 flex justify-around items-center list-none">
         <Link to="/">
           <li>Home</li>

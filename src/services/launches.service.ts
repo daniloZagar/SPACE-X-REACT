@@ -1,10 +1,10 @@
 import http from "../http-common";
 import LaunchesData from "../types/launches.type";
 const getAll = () => {
-  return http.get<Array<LaunchesData>>("/launches");
+  return http.get<Array<LaunchesData>>("/launches?limit=20&offset=0");
 };
-const get = (limit: any, offset: any) => {
-  return http.get<LaunchesData>(`/launches?limit=${limit}&offset=${offset}`);
+const get = (offset: any) => {
+  return http.get<LaunchesData>(`/launches?limit=20&offset=${offset}`);
 };
 const LaunchesDataService = {
   getAll,
