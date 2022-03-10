@@ -4,8 +4,10 @@ import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 import useFetch from "../../hooks/useFetch";
 import Loader from "../Loader/index";
 export default function Launches() {
-  const { loadMoreRef, numOfLaunches } = useInfiniteScroll();
-  const { loading, launches } = useFetch(numOfLaunches);
+  const { loadMoreRef, offset } = useInfiniteScroll();
+  console.log("useInfiniteScroll", useInfiniteScroll());
+  const { loading, launches } = useFetch(offset);
+  console.log(launches);
 
   function launchLink(id: number) {
     return `/launches/${id}`;

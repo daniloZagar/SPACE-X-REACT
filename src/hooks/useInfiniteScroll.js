@@ -5,10 +5,12 @@ function useInfiniteScroll() {
   const loadMoreRef = useRef(null);
   const handleObserver = useCallback((entries) => {
     const [target] = entries;
+    console.log('TARGET', target.isIntersecting)
     if (target.isIntersecting) {
       setLaunches((prev) => prev + 20);
     }
   }, []);
+  
   useEffect(() => {
     const option = {
       root: null,
