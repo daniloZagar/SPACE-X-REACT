@@ -9,18 +9,23 @@ export default function Launches() {
   const [lastElement, setLastElement] = useState(null);
   const { offset, observer } = useInfiniteScroll();
   const [launchesData, setLaunchesData] = useState([]);
-  const getLaunches = async () => {
-    try {
-      const response = await LaunchesDataService.get(offset);
-      const data = response.data;
-      setLaunchesData((prev) => [...prev, ...data]);
-      console.log(data)
-    } catch (error) {
-      console.log(error);
-    }
+  const { data, error } = useFetch(offset);
+  // const getLaunches = async () => {
+  //   try {
+  // const response = await LaunchesDataService.get(offset);
+  // const data = response.data;
+  // setLaunchesData((prev) => [...prev, ...data]);
+  // console.log(data)
+  //     setLaunchesData((prev) => [...prev, ...data]);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  const getLaunches = () => {
+    setLaunchesData(data);
   };
   useEffect(() => {
-      getLaunches()
+    getLaunches();
   }, [offset]);
   useEffect(() => {
     const currentElement = lastElement;

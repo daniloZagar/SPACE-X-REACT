@@ -1,23 +1,21 @@
-import { useState, useEffect, useCallback } from "react";
-import LaunchesDataService from "../services/launches.service";
+import axios from "axios";
+import { useState, useEffect } from "react";
+
 function useFetch(url) {
-  const [loading, setLoading] = useState(false);
-  const [launchesData, setLaunchesData] = useState([]);
-  const getLaunches = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await LaunchesDataService.get(offset);
-      const data = response.data;
-      setLaunchesData((prev) => [...prev, ...data]);
-      console.log(data);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  }, [offset]);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
   useEffect(() => {
-    getLaunches();
-  }, [getLaunches]);
-  return { loading, launchesData };
+    setData(null);
+    setError(null);
+    axios
+      .get(url)
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((err) => {
+        setError(err);
+      });
+  }, [url]);
+  return { data, error };
 }
 export default useFetch;
