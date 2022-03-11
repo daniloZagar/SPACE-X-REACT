@@ -1,14 +1,41 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "./LaunchesList.css";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 import useFetch from "../../hooks/useFetch";
+import LaunchesDataService from "../../services/launches.service";
 import Loader from "../Loader/index";
 export default function Launches() {
-  const { loadMoreRef, offset } = useInfiniteScroll();
-  console.log("useInfiniteScroll", useInfiniteScroll());
-  const { loading, launches } = useFetch(offset);
-  console.log(launches);
+  const [lastElement, setLastElement] = useState(null);
+  const { offset, observer } = useInfiniteScroll();
+  const [launchesData, setLaunchesData] = useState([]);
+  const getLaunches = async () => {
+    try {
+      const response = await LaunchesDataService.get(offset);
+      const data = response.data;
+      setLaunchesData((prev) => [...prev, ...data]);
+      console.log(data)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+      getLaunches()
+  }, [offset]);
+  useEffect(() => {
+    const currentElement = lastElement;
+    const currentObserver = observer.current;
 
+    if (currentElement) {
+      currentObserver.observe(currentElement);
+    }
+
+    return () => {
+      if (currentElement) {
+        currentObserver.unobserve(currentElement);
+      }
+    };
+  }, [lastElement]);
   function launchLink(id: number) {
     return `/launches/${id}`;
   }
@@ -16,10 +43,14 @@ export default function Launches() {
   return (
     <div>
       <div className="h-screen grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {launches?.map((l, index) => {
+        {launchesData?.map((l, index) => {
           return (
-            <Link to={launchLink(l.flight_number)} key={index}>
-              <div className="col-span-1 flex flex-col lg:flex-row gap-12 justify-center items-center bg-yellow py-10 px-5">
+            <Link
+              to={launchLink(l.flight_number)}
+              key={index}
+              ref={setLastElement}
+            >
+              <div className="col-span-1 flex flex-col lg:flex-row gap-12 justify-center items-center bg-yellow py-10 px-5 h-44">
                 <div className="flex flex-col items-center lg:items-start">
                   <p className="text-white text-2xl">
                     Mission Number: {l.flight_number}
@@ -42,7 +73,6 @@ export default function Launches() {
           );
         })}
       </div>
-      <div ref={loadMoreRef}>{loading && <Loader />}</div>
     </div>
   );
 }
